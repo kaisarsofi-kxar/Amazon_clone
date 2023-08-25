@@ -159,6 +159,12 @@ const ProductInfoScreen = () => {
           {route.params?.size}
         </Text>
       </View>
+
+      <Text style={{ height: 1, borderColor: "#d0d0d0", borderWidth: 1 }} />
+
+      <View style={{padding:10, }}>
+            <Text>Total : {route?.params.price}</Text>
+      </View>
     </ScrollView>
   );
 };
