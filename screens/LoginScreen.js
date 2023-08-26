@@ -23,17 +23,16 @@ const LoginScreen = () => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const token = await AsyncStorage.getItem("authToken");
+        const token = await AsyncStorage.getItem("authenToken");
         if (token) {
           navigation.replace("Main");
         }
-
       } catch (error) {
-        console.log("error message", error)
+        console.log("error message", error);
       }
     };
     checkLoginStatus();
-  }, [])
+  }, []);
   const handleLogin = () => {
     const user = {
       email: email,
@@ -43,14 +42,13 @@ const LoginScreen = () => {
     axios
       .post("http://localhost:6000/login", user)
       .then((response) => {
-        console.log(response);
         const token = response.data.token;
-        AsyncStorage.setItem("authToken", token);
+        AsyncStorage.setItem("authenToken", token);
         navigation.replace("Main");
       })
       .catch((error) => {
         Alert.alert("Login Error", "Invalid Email");
-        console.log(error);
+        console.log("error", error);
       });
   };
   return (

@@ -16,7 +16,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/CartReducer";
-import SearchHeader from "../assets/SearchHeader";
+import SearchHeader from "../components/SearchHeader";
 
 const ProductInfoScreen = () => {
   const route = useRoute();
@@ -34,7 +34,6 @@ const ProductInfoScreen = () => {
   };
 
   const cart = useSelector((state) => state.cart.cart);
-  console.log(cart);
 
   return (
     <ScrollView

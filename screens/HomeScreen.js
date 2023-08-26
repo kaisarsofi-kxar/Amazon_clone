@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Platform } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -21,7 +21,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { BottomModal, ModalContent, SlideAnimation } from "react-native-modals";
 import { Entypo } from "@expo/vector-icons";
-import SearchHeader from "../assets/SearchHeader";
+import SearchHeader from "../components/SearchHeader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { UserType } from "../UserContext";
+import jwt_decode from "jwt-decode";
 
 const HomeScreen = () => {
   const list = [
@@ -196,6 +199,10 @@ const HomeScreen = () => {
 
   const [products, setProducts] = useState([]);
   const [open, setOpen] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const { userId, setUserId } = useContext(UserType);
+  const [selectedAddress, setSelectedAddress] = useState("");
   const [category, setCategory] = useState("jewelery");
   const [items, setItems] = useState([
     { label: "Men's clothing", value: "men's clothing" },
@@ -221,7 +228,34 @@ const HomeScreen = () => {
   }, []);
 
   const cart = useSelector((state) => state.cart.cart);
-  const [modalVisible, setModalVisible] = useState(false);
+  useEffect(() => {
+    if (userId) {
+      fetchAddresses();
+    }
+  }, [userId, modalVisible]);
+
+  const fetchAddresses = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:6000/addresses/${userId}`
+      );
+      const { addresses } = response.data;
+      setAddresses(addresses);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = await AsyncStorage.getItem("authenToken");
+      const decodedToken = jwt_decode(token);
+      const userId = decodedToken.userId;
+      setUserId(userId);
+    };
+
+    fetchUser();
+  }, []);
 
   // console.log("products", products);
   return (
@@ -247,14 +281,19 @@ const HomeScreen = () => {
           >
             <Ionicons name="location-outline" size={24} color="black" />
             <View>
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: "500",
-                }}
-              >
-                Deliver to Sujan - Bangalore 560021
-              </Text>
+              {selectedAddress ? (
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: "500",
+                  }}
+                >
+                  Deliver to {selectedAddress?.name.split(" ")[0]} -{" "}
+                  {selectedAddress?.street} {selectedAddress?.postalCode}
+                </Text>
+              ) : (
+                <Text>Add an Address</Text>
+              )}
             </View>
             <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
           </Pressable>
@@ -480,6 +519,86 @@ const HomeScreen = () => {
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {/* {alredy added adresses} */}
+            {addresses.map((item, index) => (
+              <Pressable
+                onPress={() => setSelectedAddress(item)}
+                key={index}
+                style={{
+                  width: 140,
+                  height: 140,
+                  borderColor: "#d0d0d0",
+                  marginTop: 10,
+                  borderWidth: 1,
+                  padding: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 3,
+                  marginRight: 15,
+                  backgroundColor: selectedAddress ? "#fbceb1" : "white",
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "column",
+                    gap: 3,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {item?.name}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      width: 130,
+                    }}
+                    numberOfLines={1}
+                  >
+                    {item?.houseNo}, {item?.landmark}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      width: 130,
+                    }}
+                    numberOfLines={1}
+                  >
+                    {item?.street}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      width: 130,
+                    }}
+                    numberOfLines={1}
+                  >
+                    India, {item?.city}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      width: 130,
+                    }}
+                    numberOfLines={1}
+                  >
+                    {item?.postalCode}
+                  </Text>
+                </View>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    width: 130,
+                  }}
+                  numberOfLines={1}
+                >
+                  Phone No : {item?.mobileNo}
+                </Text>
+              </Pressable>
+            ))}
             <Pressable
               onPress={() => {
                 setModalVisible(false);

@@ -32,7 +32,6 @@ const RegisterScreen = () => {
     axios
       .post("http://localhost:6000/register", user)
       .then((response) => {
-        console.log(response);
         Alert.alert(
           "Registration successful",
           "Please check your email for verification"
