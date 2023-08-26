@@ -10,76 +10,80 @@ import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import ProductInfoScreen from "../screens/ProductInfoScreen";
+import AddAddressScreen from "../screens/AddAddressScreen";
+import AddressScreen from "../screens/AddressScreen";
 
 const StackNavigation = () => {
-    const Stack = createNativeStackNavigator();
-    const Tab = createBottomTabNavigator();
-    function BottomTabs() {
-        return (
-            <Tab.Navigator>
-                <Tab.Screen
-                    name="Home"
-                    component={HomeScreen}
-                    options={{
-                        tabBarLabel: "Home",
-                        tabBarLabelStyle: { color: "#008E97" },
-                        headerShown: false,
-                        tabBarIcon: ({ focused }) => {
-                            return focused ? (
-                                <Entypo name="home" size={24} color="#008E97" />
-                            ) : (
-                                <AntDesign name="home" size={24} color="black" />
-                            );
-                        },
-                    }}
-                />
-
-                <Tab.Screen
-                    name="Profile"
-                    component={HomeScreen}
-                    options={{
-                        tabBarLabel: "Profile",
-                        tabBarLabelStyle: { color: "#008E97" },
-                        headerShown: false,
-                        tabBarIcon: ({ focused }) => {
-                            return focused ? (
-                                <Ionicons name="person" size={24} color="#008E97" />
-                            ) : (
-                                <Ionicons name="person-outline" size={24} color="black" />
-                            );
-                        },
-                    }}
-                />
-
-                <Tab.Screen
-                    name="Cart"
-                    component={HomeScreen}
-                    options={{
-                        tabBarLabel: "Cart",
-                        tabBarLabelStyle: { color: "#008E97" },
-                        headerShown: false,
-                        tabBarIcon: ({ focused }) => {
-                            return focused ? (
-                                <Entypo name="shopping-cart" size={24} color="#008E97" />
-                            ) : (
-                                <AntDesign name="shoppingcart" size={24} color="black" />
-                            );
-                        },
-                    }}
-                />
-            </Tab.Navigator>
-        );
-    }
+  const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
+  function BottomTabs() {
     return (
-        <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Login" component={LoginScreen} />
-                <Stack.Screen name="Register" component={RegisterScreen} />
-                <Stack.Screen name="Main" component={BottomTabs} />
-                <Stack.Screen name="Info" component={ProductInfoScreen} />
-            </Stack.Navigator>
-        </NavigationContainer>
+      <Tab.Navigator>
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            tabBarLabel: "Home",
+            tabBarLabelStyle: { color: "#008E97" },
+            headerShown: false,
+            tabBarIcon: ({ focused }) => {
+              return focused ? (
+                <Entypo name="home" size={24} color="#008E97" />
+              ) : (
+                <AntDesign name="home" size={24} color="black" />
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
+          name="Profile"
+          component={HomeScreen}
+          options={{
+            tabBarLabel: "Profile",
+            tabBarLabelStyle: { color: "#008E97" },
+            headerShown: false,
+            tabBarIcon: ({ focused }) => {
+              return focused ? (
+                <Ionicons name="person" size={24} color="#008E97" />
+              ) : (
+                <Ionicons name="person-outline" size={24} color="black" />
+              );
+            },
+          }}
+        />
+
+        <Tab.Screen
+          name="Cart"
+          component={HomeScreen}
+          options={{
+            tabBarLabel: "Cart",
+            tabBarLabelStyle: { color: "#008E97" },
+            headerShown: false,
+            tabBarIcon: ({ focused }) => {
+              return focused ? (
+                <Entypo name="shopping-cart" size={24} color="#008E97" />
+              ) : (
+                <AntDesign name="shoppingcart" size={24} color="black" />
+              );
+            },
+          }}
+        />
+      </Tab.Navigator>
     );
+  }
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Main" component={BottomTabs} />
+        <Stack.Screen name="Info" component={ProductInfoScreen} />
+        <Stack.Screen name="Address" component={AddAddressScreen} />
+        <Stack.Screen name="Add" component={AddressScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 };
 
 export default StackNavigation;
