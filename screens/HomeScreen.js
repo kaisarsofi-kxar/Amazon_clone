@@ -215,9 +215,10 @@ const HomeScreen = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get("https://fakestoreapi.com/products");
+
         setProducts(response.data);
       } catch (error) {
-        console.log("error message", error);
+        console.log("error message 1", error);
       }
     };
     fetchData();

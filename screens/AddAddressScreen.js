@@ -1,8 +1,8 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { UserType } from "../UserContext";
 import axios from "axios";
 import { Entypo } from "@expo/vector-icons";
@@ -26,6 +26,11 @@ const AddAddressScreen = () => {
       console.log("error", error);
     }
   };
+  useFocusEffect(
+    useCallback(() => {
+      fetchAddresses();
+    }, [])
+  );
   return (
     <>
       <ScrollView
