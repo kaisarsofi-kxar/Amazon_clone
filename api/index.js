@@ -5,28 +5,31 @@ const crypto = require("crypto");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+require("dotenv").config({
+  path: "./config/.env",
+});
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
-const port = 6000;
+const PORT = process.env.PORT;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 mongoose
-  .connect("mongodb+srv://kaisersofi:kaisar@cluster0.kaen7dw.mongodb.net/", {
+  .connect(`${process.env.DB_URL}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => {
-    console.log("Connected to MongoDB");
+  .then((data) => {
+    console.log(`Connect to MongoDB on ${data.connection.host}`);
   })
   .catch((err) => {
     console.log("Error connecting to MongoDB", err);
   });
 
-app.listen(port, () => {
-  console.log("Server running on port", port);
+app.listen(PORT, () => {
+  console.log("Server running on PORT", PORT);
 });
 
 const User = require("./models/user");
@@ -46,12 +49,11 @@ const sendVerificationEmail = async (email, verificationToken) => {
     from: "amazon.com",
     to: email,
     subject: "Please verify your email",
-    text: `Please verify your email by clicking on the following link: http://localhost:6000/verify/${verificationToken}`,
+    text: `Please verify your email by clicking on the following link: http://localhost:8000/verify/${verificationToken}`,
   };
   //* send the email
   try {
     await transporter.sendMail(mailOptions);
-    console.log("verification mail sent successfully");
   } catch (error) {
     console.log("Error sending verification email", error);
   }
@@ -87,7 +89,6 @@ app.post("/register", async (req, res) => {
         "Registration successful. Please check your email for verification",
     });
   } catch (error) {
-    console.log("error registering user", error);
     res.status(500).json({ message: "Registration failed" });
   }
 });

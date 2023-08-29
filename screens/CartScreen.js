@@ -268,9 +268,10 @@ const CartScreen = () => {
                   height: 100,
                   resizeMode: "cover",
                   borderRadius: 100,
+                  backgroundColor: "#caf0f8",
                 }}
                 source={{
-                  uri: "https://media.giphy.com/media/SMEGj0pb5eUKcnot8x/giphy.gif",
+                  uri: "https://media1.giphy.com/media/fscIxPfKjPyShbwUS5/giphy.gif",
                 }}
               />
             </View>

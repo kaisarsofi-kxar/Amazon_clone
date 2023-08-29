@@ -8,8 +8,9 @@ import {
   TextInput,
   Pressable,
   Alert,
+  ActivityIndicator,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -20,202 +21,220 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
+  const [loader, setLoader] = useState(false);
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const token = await AsyncStorage.getItem("authenToken");
+        const token = await AsyncStorage.getItem("authsToken");
+
         if (token) {
           navigation.replace("Main");
         }
-      } catch (error) {
-        console.log("error message", error);
+      } catch (err) {
+        console.log("error message", err);
       }
     };
     checkLoginStatus();
   }, []);
   const handleLogin = () => {
+    setLoader(true);
     const user = {
       email: email,
       password: password,
     };
 
     axios
-      .post("http://localhost:6000/login", user)
+      .post(`http://localhost:8000/login`, user)
       .then((response) => {
+        setLoader(false);
         const token = response.data.token;
-        AsyncStorage.setItem("authenToken", token);
+        AsyncStorage.setItem("authsToken", token);
         navigation.replace("Main");
       })
       .catch((error) => {
-        Alert.alert("Login Error", "Invalid Email");
-        console.log("error", error);
+        Alert.alert("Login Error", "Invalid Email or Password");
+        setLoader(false);
+        console.log(error);
       });
   };
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
-    >
-      <View>
-        <Image
-          style={{
-            width: 150,
-            height: 100,
-          }}
-          source={{
-            uri: "https://assets.stickpng.com/thumbs/6160562276000b00045a7d97.png",
-          }}
-        />
-      </View>
-
-      <KeyboardAvoidingView>
-        <View style={{ alignItems: "center" }}>
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 17,
-              color: "#041E42",
-              marginTop: 12,
-            }}
-          >
-            Login In to your Account
-          </Text>
-        </View>
-
+    <>
+      {loader ? (
         <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <ActivityIndicator size={"large"} color={"red"} animating={loader} />
+        </View>
+      ) : (
+        <SafeAreaView
           style={{
-            marginTop: 70,
+            flex: 1,
+            backgroundColor: "white",
+            alignItems: "center",
+            marginTop: 50,
           }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5,
-              backgroundColor: "#D0D0D0",
-              borderRadius: 5,
-              paddingVertical: 5,
-              marginTop: 30,
-            }}
-          >
-            <MaterialIcons
-              style={{ marginLeft: 8 }}
-              name="email"
-              size={24}
-              color="gray"
-            />
-            <TextInput
-              value={email}
-              onChangeText={(text) => {
-                setEmail(text);
+          <View>
+            <Image
+              style={{ width: 150, height: 100 }}
+              source={{
+                uri: "https://assets.stickpng.com/thumbs/6160562276000b00045a7d97.png",
               }}
-              style={{
-                color: "gray",
-                marginVertical: 10,
-                width: 300,
-                fontSize: email ? 16 : 16,
-              }}
-              placeholder="enter your Email"
             />
           </View>
-        </View>
 
-        <View style={{ marginTop: 10 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5,
-              backgroundColor: "#D0D0D0",
-              borderRadius: 5,
-              paddingVertical: 5,
-              marginTop: 30,
-            }}
-          >
-            <AntDesign
-              style={{ marginLeft: 8 }}
-              name="lock1"
-              size={24}
-              color="gray"
-            />
-            <TextInput
-              value={password}
-              onChangeText={(text) => {
-                setPassword(text);
-              }}
+          <KeyboardAvoidingView>
+            <View style={{ alignItems: "center" }}>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: "bold",
+                  marginTop: 12,
+                  color: "#041E42",
+                }}
+              >
+                Login In to your Account
+              </Text>
+            </View>
+
+            <View style={{ marginTop: 70 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 5,
+                  backgroundColor: "#D0D0D0",
+                  paddingVertical: 5,
+                  borderRadius: 5,
+                  marginTop: 30,
+                }}
+              >
+                <MaterialIcons
+                  style={{ marginLeft: 8 }}
+                  name="email"
+                  size={24}
+                  color="gray"
+                />
+
+                <TextInput
+                  value={email}
+                  onChangeText={(text) => setEmail(text)}
+                  style={{
+                    color: "gray",
+                    marginVertical: 10,
+                    width: 300,
+                    fontSize: email ? 16 : 16,
+                  }}
+                  placeholder="enter your Email"
+                />
+              </View>
+            </View>
+
+            <View style={{ marginTop: 10 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 5,
+                  backgroundColor: "#D0D0D0",
+                  paddingVertical: 5,
+                  borderRadius: 5,
+                  marginTop: 30,
+                }}
+              >
+                <AntDesign
+                  name="lock1"
+                  size={24}
+                  color="gray"
+                  style={{ marginLeft: 8 }}
+                />
+
+                <TextInput
+                  value={password}
+                  onChangeText={(text) => setPassword(text)}
+                  secureTextEntry={true}
+                  style={{
+                    color: "gray",
+                    marginVertical: 10,
+                    width: 300,
+                    fontSize: password ? 16 : 16,
+                  }}
+                  placeholder="enter your Password"
+                />
+              </View>
+            </View>
+
+            <View
               style={{
-                color: "gray",
-                marginVertical: 10,
-                width: 300,
-                fontSize: password ? 16 : 16,
+                marginTop: 12,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
-              placeholder="enter your Password"
-              secureTextEntry={true}
-            />
-          </View>
-        </View>
-        <View
-          style={{
-            marginTop: 12,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <Text style={{ fontWeight: "bold" }}>Keep me logged in</Text>
-          <Text style={{ fontWeight: "bold", color: "#007fff" }}>
-            Forgot Password
-          </Text>
-        </View>
+            >
+              <Text>Keep me logged in</Text>
 
-        <View style={{ marginTop: 80 }} />
+              <Text style={{ color: "#007FFF", fontWeight: "500" }}>
+                Forgot Password
+              </Text>
+            </View>
 
-        <Pressable
-          onPress={handleLogin}
-          style={{
-            width: 200,
-            backgroundColor: "#FEBE10",
-            borderRadius: 6,
-            marginLeft: "auto",
-            marginRight: "auto",
-            padding: 15,
-          }}
-        >
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 16,
-              color: "#ffffff",
-              textAlign: "center",
-            }}
-          >
-            {" "}
-            Login
-          </Text>
-        </Pressable>
+            <View style={{ marginTop: 80 }} />
 
-        <View
-          style={{
-            marginTop: 12,
-            flexDirection: "row",
-            alignItems: "center",
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}
-        >
-          <Text>Don't have an account?</Text>
-          <Pressable
-            onPress={() => {
-              navigation.navigate("Register");
-            }}
-          >
-            <Text style={{ fontWeight: "bold", color: "#007fff" }}>
-              {" "}
-              Sign Up
-            </Text>
-          </Pressable>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            <Pressable
+              onPress={handleLogin}
+              style={{
+                width: 200,
+                backgroundColor: "#FEBE10",
+                borderRadius: 6,
+                marginLeft: "auto",
+                marginRight: "auto",
+                padding: 15,
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "white",
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
+                Login
+              </Text>
+            </Pressable>
+
+            <View style={{ marginTop: 15 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 5,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{ textAlign: "center", color: "gray", fontSize: 16 }}
+                >
+                  Don't have an account?
+                </Text>
+                <Pressable onPress={() => navigation.navigate("Register")}>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: "#007FFF",
+                      fontSize: 16,
+                    }}
+                  >
+                    Sign Up
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      )}
+    </>
   );
 };
 

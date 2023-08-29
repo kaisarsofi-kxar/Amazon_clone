@@ -14,16 +14,16 @@ const AddAddressScreen = () => {
   const { userId, setUserId } = useContext(UserType);
   useEffect(() => {
     fetchAddresses();
-  });
+  }, []);
   const fetchAddresses = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:6000/addresses/${userId}`
+        `http://localhost:8000/addresses/${userId}`
       );
       const { addresses } = response.data;
       setAddresses(addresses);
     } catch (error) {
-      console.log("error", error);
+      console.log("error 1", error);
     }
   };
   useFocusEffect(

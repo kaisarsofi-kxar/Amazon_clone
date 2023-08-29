@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Pressable, Image } from "react-native";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/CartReducer";
+import { useNavigation } from "@react-navigation/native";
 
 const ProductItem = ({ item }) => {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ const ProductItem = ({ item }) => {
       setAddedToCart(false);
     }, 60000);
   };
+  const navigation = useNavigation();
   return (
     <Pressable style={{ marginHorizontal: 20, marginVertical: 25 }}>
       <Image
