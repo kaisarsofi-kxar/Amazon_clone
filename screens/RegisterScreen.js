@@ -46,6 +46,7 @@ const RegisterScreen = () => {
         navigation.navigate("Login");
       })
       .catch((error) => {
+        setLoader(false);
         Alert.alert(
           "Registration Error",
           "An error occurred while registering"
